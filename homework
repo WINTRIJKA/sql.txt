@@ -1,0 +1,39 @@
+Выведите названия продуктов, которые покупал член семьи со статусом "son". Для получения выборки вам нужно объединить таблицу Payments с таблицей FamilyMembers по полям family_member и member_id, а также с таблицей Goods по полям good и good_id.
+SELECT good_name FROM Payments
+JOIN FamilyMembers on family_member=member_id
+JOIN Goods on good=good_id 
+where status="son"
+===========================================
+INNER JOIN с группировкой
+Выведите идентификатор (поле room_id) и среднюю оценку комнаты (поле rating, для вывода используйте псевдоним avg_score), составленную на основании отзывов из таблицы Reviews.
+Данная таблица связана с Reservations (таблица, где вы можете взять идентификатор комнаты) по полям reservation_id и Reservations.id.
+select room_id,avg(rating) as avg_score from Reviews
+join Reservations on reservation_id=Reservations.id
+group by room_id
+===========================================
+Ограничение записей с начала таблицы
+Отсортируйте список компаний (таблица Company) по их названию в алфавитном порядке и выведите первые две записи.
+SELECT * FROM Company 
+ORDER BY name limit 2
+===========================================
+Ограничение количества записей со смещением
+Выведите начало (поле start_pair) и окончание (поле end_pair) второго и третьего занятия из таблицы Timepair.
+select start_pair,end_pair from Timepair LIMIT 2 OFFSET 1
+===========================================
+Скалярные подзапросы
+Выведите количество полётов каждого пассажира, представленного в таблице Passenger. Список полётов находится в таблице Pass_in_trip.
+В качестве результата выведите количество полётов (используйте псевдоним count) и имя пассажира.
+SELECT Name, COUNT(Pass_in_trip.passenger) as count
+FROM Passenger
+LEFT JOIN Pass_in_Trip ON passenger = Passenger.id
+GROUP BY Passenger.id
+===========================================
+Столбцовые подзапросы с выражением IN
+Выведите названия товаров из таблицы Goods (поле good_name), которые ещё ни разу не покупались ни одним из членов семьи (таблица Payments).
+select good_name from Goods WHERE good_id not IN (SELECT good FROM Payments)
+==========================================
+Строковые подзапросы
+Выведите список комнат (все поля, таблица Rooms), которые по своим удобствам (has_tv, has_internet, has_kitchen, has_air_con) совпадают с комнатой с идентификатором "11".
+SELECT * FROM Rooms 
+WHERE (has_tv, has_internet, has_kitchen, has_air_con) = (SELECT has_tv, has_internet, has_kitchen, has_air_con FROM Rooms WHERE id = 11)
+==========================================
