@@ -41,3 +41,25 @@ SELECT  UCASE(member_name) as name FROM FamilyMembers
 SELECT * FROM Rooms 
 WHERE (has_tv, has_internet, has_kitchen, has_air_con) = (SELECT has_tv, has_internet, has_kitchen, has_air_con FROM Rooms WHERE id = 11)
 ==========================================
+Отчёт по тратам
+Создать отчет затрат семьи Quincey за 3 квартал 2005 года. Отсортировать по возрастанию member_name, затем по убыванию поля costs.
+Последней строкой вывести итог по всей семье. Для этого необходимо под колонкой good_name вывести слово "Total:", а под costs - общую сумму всех затрат, оставив первые два поля пустыми:
+WITH report 
+    AS (
+        SELECT  member_name, 
+                status, 
+                good_name, 
+                sum(amount*unit_price) AS costs 
+        FROM   Payments
+        JOIN FamilyMembers ON Payments.family_member = 
+        FamilyMembers.member_id
+        JOIN Goods ON Payments.good = Goods.good_id
+        WHERE Payments.date BETWEEN '2005-07-01' AND '2005-09-30'
+        GROUP BY Payments.family_member, status, good_name
+    )
+SELECT * FROM report 
+UNION 
+SELECT null member_name, null status, 'Total:' good_name, SUM(costs) costs
+FROM   report 
+ORDER  BY COALESCE(member_name, 'zzz'), costs DESC
+===========================================
